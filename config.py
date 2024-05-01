@@ -1,9 +1,10 @@
-screen_width = 1080
-screen_height = 720
+screen_width = 2400
+screen_height = 1200
 fps = 3
-scale = 30
+scale = 50
 
-points_size = 5
+points_size = 2
 point_color = (0, 0, 255)
 
 circle_color = (255, 0, 0)
+circle_width = 1

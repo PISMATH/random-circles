@@ -7,7 +7,7 @@ from config import *
 Point = tuple[float, float]
 Circle = tuple[Point, Point, float]
 
-points: set[Point] = {(0, 0), (0, 1)}
+points: set[Point] = {(-1, 0), (1, 0)}
 circles: set[Circle] = set()
 
 def dist(point1: Point, point2: Point) -> float:
@@ -27,9 +27,13 @@ def intersectCircle(circle1: Circle, circle2: Circle) -> set[Point]:
         # No intersection
         return set()
 
-    # Calculate intersection points
+    # Adjust for precision issues to ensure sqrt receives a non-negative argument
     a = (radius1**2 - radius2**2 + d**2) / (2 * d)
-    h = sqrt(radius1**2 - a**2)
+    h_square = radius1**2 - a**2
+    if h_square < 0:
+        return set()  # To handle precision issues that might lead to a small negative number
+
+    h = sqrt(h_square)
     midpoint = ((center1[0] + a * (center2[0] - center1[0]) / d),
                 (center1[1] + a * (center2[1] - center1[1]) / d))
 
@@ -42,8 +46,11 @@ def intersectCircle(circle1: Circle, circle2: Circle) -> set[Point]:
 
 def drawRandomCircle(points: set[Point], circles: set[Circle]):
     center = random.choice(list(points))
+
     points.remove(center)
     secondpoint = random.choice(list(points))
+    points.add(center)
+
     new_circle: Circle = (center, secondpoint, dist(center, secondpoint))
     
     for circle in circles:
@@ -53,22 +60,25 @@ def drawRandomCircle(points: set[Point], circles: set[Circle]):
     circles.add(new_circle)
 
 def convertGeoPointToScreenCoords(point: Point):
-    x = point[0] * scale + screen_height / 2
-    y = point[1] * scale + screen_width / 2
+    x = point[0] * scale + screen_width / 2
+    y = point[1] * scale + screen_height / 2
     return x, y
 
 def renderEverything(points: set[Point], circles: set[Circle], screen):
-    screen.fill('Black')
+    screen.fill('BLACK')
 
     for circle in circles:
         center, _, r = circle
         x, y = convertGeoPointToScreenCoords(center)
         rad = r * scale
-        pygame.draw.circle(screen, circle_color, (x, y), rad)
+        pygame.draw.circle(screen, circle_color, (x, y), rad, circle_width)
 
     for point in points:
         x, y = convertGeoPointToScreenCoords(point)
+        print(x, y)
         pygame.draw.circle(screen, point_color, (x, y), points_size)
+
+    pygame.display.flip()
 
 def main():
     pygame.init()
@@ -82,7 +92,9 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        drawRandomCircle(points, circles)
+            if event.type == pygame.KEYDOWN:
+                drawRandomCircle(points, circles)
         renderEverything(points, circles, screen)
+        
 
 main()
