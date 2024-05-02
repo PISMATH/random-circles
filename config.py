@@ -1,7 +1,7 @@
 screen_width = 2400
 screen_height = 1200
 fps = 3
-scale = 50
+scale = 100
 
 points_size = 2
 point_color = (0, 0, 255)
@@ -15,4 +15,4 @@ line_width = 1
 
 Point = tuple[float, float]
 Circle = tuple[Point, Point, float]
-Line = tuple[Point]
+Line = tuple[Point, Point]
