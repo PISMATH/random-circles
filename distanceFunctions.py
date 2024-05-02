@@ -56,37 +56,37 @@ def intersectLines(line1: Line, line2: Line) -> set[Point]:
     return set()
 
 def intersectLineCircle(line: Line, circle: Circle) -> set[Point]:
-    # Extract circle info
-    (cx, cy), _, r = circle
-    # Extract line info
+    # Unpacking line points
     (x1, y1), (x2, y2) = line
 
-    # Line equation coefficients
-    A = y2 - y1
-    B = x1 - x2
-    C = A*x1 + B*y1 - (A*cx + B*cy)
+    # Unpacking circle center and radius, ignoring the unused point
+    (cx, cy), _, radius = circle
 
-    # Finding intersection points
-    discriminant = r**2 * (A**2 + B**2) - C**2
-    if discriminant < 0:
-        return set()  # No real solutions, no intersection
+    # Line parametric form coefficients
+    dx = x2 - x1
+    dy = y2 - y1
 
-    # Line intersects the circle at least at one point
-    sqrt_discriminant = sqrt(discriminant)
-    t1 = (-B*C - A*sqrt_discriminant) / (A**2 + B**2)
-    t2 = (-B*C + A*sqrt_discriminant) / (A**2 + B**2)
-    x_inter1 = cx + t1
-    y_inter1 = cy + t2
-    x_inter2 = cx + t1
-    y_inter2 = cy + t2
+    # Calculate quadratic equation coefficients A, B, and C
+    A = dx**2 + dy**2
+    B = 2 * (dx * (x1 - cx) + dy * (y1 - cy))
+    C = (x1 - cx)**2 + (y1 - cy)**2 - radius**2
 
-    # Check if the intersection points are within the line segment
-    result = set()
-    if min(x1, x2) <= x_inter1 <= max(x1, x2) and min(y1, y2) <= y_inter1 <= max(y1, y2):
-        result.add((x_inter1, y_inter1))
-    if min(x1, x2) <= x_inter2 <= max(x1, x2) and min(y1, y2) <= y_inter2 <= max(y1, y2):
-        result.add((x_inter2, y_inter2))
-    return result
+    # Discriminant
+    D = B**2 - 4 * A * C
+
+    # Determining the number of intersection points based on the discriminant
+    if D < 0:
+        return set()  # No intersection
+    elif D == 0:
+        t = -B / (2 * A)
+        intersections = {(x1 + t * dx, y1 + t * dy)}
+    else:
+        sqrt_D = D**0.5
+        t1 = (-B + sqrt_D) / (2 * A)
+        t2 = (-B - sqrt_D) / (2 * A)
+        intersections = {(x1 + t1 * dx, y1 + t1 * dy), (x1 + t2 * dx, y1 + t2 * dy)}
+
+    return intersections
     
 def convertGeoPointToScreenCoords(point: Point):
     x = point[0] * scale + screen_width / 2
