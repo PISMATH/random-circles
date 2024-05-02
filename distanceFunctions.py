@@ -4,6 +4,24 @@ from math import sqrt
 def dist(point1: Point, point2: Point) -> float:
     return sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
 
+def pointsInBoundingBox(bound1: Point, bound2: Point, points: set[Point]) -> set[Point]:
+    b1x, b1y = bound1
+    b2x, b2y = bound2
+
+    minx = min(b1x, b2x)
+    maxx = max(b1x, b2x)
+    miny = min(b1y, b2y)
+    maxy = max(b1y, b2y)
+    
+    pointsInBox: set[Point] = set()
+
+    for point in points:
+        px, py = point
+        if minx <= px <= maxx and miny <= py <= maxy:
+            pointsInBox.add(point)
+
+    return pointsInBox
+
 def intersectCircles(circle1: Circle, circle2: Circle) -> set[Point]:
     center1, _, radius1 = circle1
     center2, _, radius2 = circle2
@@ -50,10 +68,9 @@ def intersectLines(line1: Line, line2: Line) -> set[Point]:
     intersect_y = ((x1*y2 - y1*x2)*(y3 - y4) - (y1 - y2)*(x3*y4 - y3*x4)) / denom
 
     # Check if the intersection point is within both line segments
-    if min(x1, x2) <= intersect_x <= max(x1, x2) and min(y1, y2) <= intersect_y <= max(y1, y2) \
-       and min(x3, x4) <= intersect_x <= max(x3, x4) and min(y3, y4) <= intersect_y <= max(y3, y4):
-        return {(intersect_x, intersect_y)}
-    return set()
+    
+    intersects = pointsInBoundingBox((x1, y1), (x2, y2), {(intersect_x, intersect_y)})
+    return pointsInBoundingBox((x3, y3), (x4, y4), intersects)
 
 def intersectLineCircle(line: Line, circle: Circle) -> set[Point]:
     # Unpacking line points
@@ -86,7 +103,7 @@ def intersectLineCircle(line: Line, circle: Circle) -> set[Point]:
         t2 = (-B - sqrt_D) / (2 * A)
         intersections = {(x1 + t1 * dx, y1 + t1 * dy), (x1 + t2 * dx, y1 + t2 * dy)}
 
-    return intersections
+    return pointsInBoundingBox((x1, y1), (x2, y2), intersections)
     
 def convertGeoPointToScreenCoords(point: Point):
     x = point[0] * scale + screen_width / 2
