@@ -11,7 +11,7 @@ circles: set[Circle] = set()
 lines: set[Line] = set()
 
 def renderEverything(points: set[Point], circles: set[Circle], screen):
-    screen.fill('BLACK')
+    screen.fill(background_color)
 
     for circle in circles:
         center, _, r = circle
@@ -23,7 +23,8 @@ def renderEverything(points: set[Point], circles: set[Circle], screen):
         p1, p2 = line
         point1 = convertGeoPointToScreenCoords(p1)
         point2 = convertGeoPointToScreenCoords(p2)
-        pygame.draw.line(screen, circle_color, point1, point2, line_width)
+        pygame.draw.line(screen, line_color, point1, point2, line_width)
+
     for point in points:
         x, y = convertGeoPointToScreenCoords(point)
         pygame.draw.circle(screen, point_color, (x, y), points_size)
