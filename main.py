@@ -1,9 +1,10 @@
 
 import pygame
+from pygame.draw import line
 
 from config import *
 from distanceFunctions import *
-from newObject import addNewRandomObject
+from newObject import addNewRandomObject, addRandomCircle, addRandomLine
 
 points: set[Point] = {(-1, 0), (1, 0)}
 circles: set[Circle] = set()
@@ -42,7 +43,15 @@ def main():
                 running = False
 
             if event.type == pygame.KEYDOWN:
-                addNewRandomObject(points, circles, lines)
+                if event.key == pygame.K_l:
+                    addRandomLine(points, circles, lines)
+                
+                elif event.key == pygame.K_c:
+                    addRandomCircle(points, circles, lines)
+                
+                elif event.key == pygame.K_SPACE:
+                    addNewRandomObject(points, circles, lines)
+                
         renderEverything(points, circles, screen)
         
 
