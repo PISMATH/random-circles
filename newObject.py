@@ -1,6 +1,7 @@
 import random
 from config import *
 from distanceFunctions import *
+from isNew import addCircles, addLines, addPoints
 
 def addRandomCircle(points: set[Point], circles: set[Circle], lines: set[Line]):
     center = random.choice(list(points))
@@ -13,13 +14,17 @@ def addRandomCircle(points: set[Point], circles: set[Circle], lines: set[Line]):
     
     for circle in circles:
         point_intersects = intersectCircles(circle, new_circle)
-        points.update(point_intersects)
+        if DebugMode:
+            print(f"In random circle, points {point_intersects} were added to the list. These points are from circles {new_circle}, {circle}")
+        addPoints(points, point_intersects)
 
     for line in lines:
         point_intersects = intersectLineCircle(line, new_circle)
-        points.update(point_intersects)
+        if DebugMode:
+            print(f"In random circle, points {point_intersects} were added to the list. These points are from circle {new_circle} and line {line}")
+        addPoints(points, point_intersects)
 
-    circles.add(new_circle)
+    addCircles(circles, {new_circle})
 
 def addRandomLine(points: set[Point], circles: set[Circle], lines: set[Line]):
     point1 = random.choice(list(points))
@@ -32,13 +37,13 @@ def addRandomLine(points: set[Point], circles: set[Circle], lines: set[Line]):
     
     for circle in circles:
         point_intersects = intersectLineCircle(new_line, circle)
-        points.update(point_intersects)
+        addPoints(points, point_intersects)
 
     for line in lines:
         point_intersects = intersectLines(line, new_line)
-        points.update(point_intersects)
+        addPoints(points, point_intersects)
 
-    lines.add(new_line)
+    addLines(lines, {new_line})
 
 def addNewRandomObject(points: set[Point], circles: set[Circle], lines: set[Line]):
     if random.random() < circle_odds:

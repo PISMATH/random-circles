@@ -1,6 +1,5 @@
 
 import pygame
-from pygame.draw import line
 
 from config import *
 from distanceFunctions import *
