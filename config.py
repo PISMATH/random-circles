@@ -1,9 +1,6 @@
-from re import DEBUG
-
-
 screen_width = 2400
 screen_height = 1200
-fps = 300
+fps = 15
 scale = 100
 
 background_color = (255, 255, 255)
@@ -25,3 +22,5 @@ Circle = tuple[Point, Point, float]
 Line = tuple[Point, Point]
 
 DebugMode = False
+
+inital_points: set[Point] = {(-1, 0), (1, 0)}

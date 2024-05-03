@@ -32,7 +32,7 @@ def main():
     screen = pygame.display.set_mode((screen_width, screen_height))
     clock = pygame.time.Clock()
     running = True
-    points: set[Point] = {(-1, 0), (1, 0)}
+    points = inital_points.copy()
     circles: set[Circle] = set()
     lines: set[Line] = set()
 
@@ -46,6 +46,13 @@ def main():
                 running = False
 
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    points = inital_points.copy()
+                    circles = set()
+                    lines = set()
+
+                    stateHistory = [(points.copy(), circles.copy(), lines.copy())]
+
                 if event.key == pygame.K_l:
                     addRandomLine(points, circles, lines)
                     stateHistory.append((points.copy(), circles.copy(), lines.copy()))
