@@ -1,4 +1,7 @@
 from config import *
+import math
+
+from rulePlugins import circleRulesPlugin, lineRulesPlugin, pointRulesPlugin
 
 def pointIsNew(points: set[Point], point: Point) -> bool:
     x1, y1 = point
@@ -25,18 +28,28 @@ def lineIsNew(lines: set[Line], line: Line) -> bool:
             return False
     return True
 
+def pointIsAllowed(points: set[Point], point: Point) -> bool:
+    return pointIsNew(points, point) and pointRulesPlugin(points, point)
+
+
+def circleIsAllowed(circles: set[Circle], circle: Circle) -> bool:
+    return circleIsNew(circles, circle) and circleRulesPlugin(circles, circle)
+
+def lineIsAllowed(lines: set[Line], line: Line) -> bool:
+    return lineIsNew(lines, line) and lineRulesPlugin(lines, line)
+
 
 def addPoints(points: set[Point], new_points: set[Point]) -> None:
     for new_point in new_points:
-        if pointIsNew(points, new_point):
+        if pointIsAllowed(points, new_point):
             points.add(new_point)
 
 def addCircles(circles: set[Circle], new_circles: set[Circle]) -> None:
     for new_circle in new_circles:
-        if circleIsNew(circles, new_circle):
+        if circleIsAllowed(circles, new_circle):
             circles.add(new_circle)  
 
 def addLines(lines: set[Line], new_lines: set[Line]) -> None:
     for new_line in new_lines:
-        if lineIsNew(lines, new_line):
-            lines.add(new_line)     
+        if lineIsAllowed(lines, new_line):
+            lines.add(new_line)

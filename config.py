@@ -23,4 +23,4 @@ Line = tuple[Point, Point]
 
 DebugMode = False
 
-inital_points: set[Point] = {(-1, 0), (1, 0)}
+inital_points = {(-1, 0), (1, 0)}

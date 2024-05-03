@@ -1,7 +1,7 @@
 import random
 from config import *
 from distanceFunctions import *
-from isNew import addCircles, addLines, addPoints
+from isNew import addCircles, addLines, addPoints, circleIsAllowed, lineIsAllowed
 
 def addRandomCircle(points: set[Point], circles: set[Circle], lines: set[Line]):
     center = random.choice(list(points))
@@ -12,6 +12,9 @@ def addRandomCircle(points: set[Point], circles: set[Circle], lines: set[Line]):
 
     new_circle: Circle = (center, secondpoint, dist(center, secondpoint))
     
+    if not circleIsAllowed(circles, new_circle):
+        return
+
     for circle in circles:
         point_intersects = intersectCircles(circle, new_circle)
         if DebugMode:
@@ -34,7 +37,10 @@ def addRandomLine(points: set[Point], circles: set[Circle], lines: set[Line]):
     points.add(point1)
 
     new_line: Line = (point1, point2)
-    
+
+    if not lineIsAllowed(lines, new_line):
+        return
+
     for circle in circles:
         point_intersects = intersectLineCircle(new_line, circle)
         addPoints(points, point_intersects)
