@@ -5,11 +5,8 @@ from config import *
 from distanceFunctions import *
 from newObject import addNewRandomObject, addRandomCircle, addRandomLine
 
-points: set[Point] = {(-1, 0), (1, 0)}
-circles: set[Circle] = set()
-lines: set[Line] = set()
 
-def renderEverything(points: set[Point], circles: set[Circle], screen):
+def renderEverything(lines: set[Line], points: set[Point], circles: set[Circle], screen):
     screen.fill(background_color)
 
     for circle in circles:
@@ -35,7 +32,13 @@ def main():
     screen = pygame.display.set_mode((screen_width, screen_height))
     clock = pygame.time.Clock()
     running = True
+    points: set[Point] = {(-1, 0), (1, 0)}
+    circles: set[Circle] = set()
+    lines: set[Line] = set()
 
+    stateHistory: list[tuple[set[Point], set[Circle], set[Line]]] = [(points.copy(), circles.copy(), lines.copy())]
+
+    historyChanged = False
     while running:
         clock.tick(fps)
         for event in pygame.event.get():
@@ -45,14 +48,27 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_l:
                     addRandomLine(points, circles, lines)
+                    stateHistory.append((points.copy(), circles.copy(), lines.copy()))
                 
                 elif event.key == pygame.K_c:
                     addRandomCircle(points, circles, lines)
+                    stateHistory.append((points.copy(), circles.copy(), lines.copy()))
                 
                 elif event.key == pygame.K_SPACE:
                     addNewRandomObject(points, circles, lines)
+                    stateHistory.append((points.copy(), circles.copy(), lines.copy()))
+
+                # check control+z
+                elif event.key == pygame.K_z:
+                    if len(stateHistory) > 0:
+                        historyChanged = True
+                        points, circles, lines = stateHistory.pop()
+                if historyChanged:
+                    historyChanged = False
+                else:
+                    stateHistory.append((points.copy(), circles.copy(), lines.copy()))
                 
-        renderEverything(points, circles, screen)
+        renderEverything(lines, points, circles, screen)
         
 
 main()
