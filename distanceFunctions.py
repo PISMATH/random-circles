@@ -104,8 +104,24 @@ def intersectLineCircle(line: Line, circle: Circle) -> set[Point]:
         intersections = {(x1 + t1 * dx, y1 + t1 * dy), (x1 + t2 * dx, y1 + t2 * dy)}
 
     return pointsInBoundingBox((x1, y1), (x2, y2), intersections)
-    
+
+def nearestPoint(points: set[Point], point) -> Point | None:
+    closestPoint = None
+    closestDistance = float('inf')
+    for p1 in points:
+        currentDistance = dist(point, p1)
+        if currentDistance < closestDistance:
+            closestPoint = p1
+            closestDistance = currentDistance
+    return closestPoint
+
 def convertGeoPointToScreenCoords(point: Point):
     x = point[0] * scale + screen_width / 2
     y = point[1] * scale + screen_height / 2
     return x, y
+
+def convertScreenCoordsToGeoPoint(point):
+    x = (point[0] - screen_width / 2) / scale
+    y = (point[1] - screen_height / 2) / scale
+    return x, y
+    

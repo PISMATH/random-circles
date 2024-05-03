@@ -1,4 +1,3 @@
-import math
 from config import Circle, Line, Point
 
 

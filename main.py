@@ -3,7 +3,7 @@ import pygame
 from config import *
 from distanceFunctions import *
 from newObject import addNewRandomObject, addRandomCircle, addRandomLine
-
+from isNew import addPoints
 
 def renderEverything(lines: set[Line], points: set[Point], circles: set[Circle], screen):
     screen.fill(background_color)
@@ -38,6 +38,7 @@ def main():
     stateHistory: list[tuple[set[Point], set[Circle], set[Line]]] = [(points.copy(), circles.copy(), lines.copy())]
 
     historyChanged = False
+    clickMode = 0 # 0 is new point, 1 is delete nearest point
     while running:
         clock.tick(fps)
         for event in pygame.event.get():
@@ -51,7 +52,7 @@ def main():
                     lines = set()
 
                     stateHistory = [(points.copy(), circles.copy(), lines.copy())]
-
+            
                 if event.key == pygame.K_l:
                     addRandomLine(points, circles, lines)
                     stateHistory.append((points.copy(), circles.copy(), lines.copy()))
@@ -69,11 +70,37 @@ def main():
                     if len(stateHistory) > 0:
                         historyChanged = True
                         points, circles, lines = stateHistory.pop()
+                
+                elif event.key == pygame.K_0:
+                    clickMode = 0
+                
+                elif event.key == pygame.K_1:
+                    clickMode = 1
+                    
                 if historyChanged:
                     historyChanged = False
                 else:
                     stateHistory.append((points.copy(), circles.copy(), lines.copy()))
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if clickMode == 0:
+                    clickPos = convertScreenCoordsToGeoPoint(pygame.mouse.get_pos())
+                    if DebugMode:
+                        print(f"click at {clickPos} and mode 0")
+                    addPoints(points, {clickPos})
+                    stateHistory.append((points.copy(), circles.copy(), lines.copy()))
                 
+                if clickMode == 1:
+
+                    clickPos = convertScreenCoordsToGeoPoint(pygame.mouse.get_pos())
+                    if DebugMode:
+                        print(f"click at {clickPos} and mode 1")
+                    nearest_point = nearestPoint(points, clickPos)
+                    if nearest_point != None:
+                        points.remove(nearest_point)
+                        stateHistory.append((points.copy(), circles.copy(), lines.copy()))
+                
+                  
         renderEverything(lines, points, circles, screen)
         
 
