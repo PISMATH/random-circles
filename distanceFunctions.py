@@ -115,12 +115,12 @@ def nearestPoint(points: set[Point], point) -> Point | None:
             closestDistance = currentDistance
     return closestPoint
 
-def convertGeoPointToScreenCoords(point: Point):
+def convertGeoPointToScreenCoords(point: Point, scale):
     x = point[0] * scale + screen_width / 2
     y = point[1] * scale + screen_height / 2
     return x, y
 
-def convertScreenCoordsToGeoPoint(point):
+def convertScreenCoordsToGeoPoint(point, scale):
     x = (point[0] - screen_width / 2) / scale
     y = (point[1] - screen_height / 2) / scale
     return x, y

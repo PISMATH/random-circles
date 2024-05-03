@@ -3,13 +3,7 @@ from config import *
 from distanceFunctions import *
 from isNew import addCircles, addLines, addPoints, circleIsAllowed, lineIsAllowed
 
-def addRandomCircle(points: set[Point], circles: set[Circle], lines: set[Line]):
-    center = random.choice(list(points))
-
-    points.remove(center)
-    secondpoint = random.choice(list(points))
-    points.add(center)
-
+def addCircleIntersects(points: set[Point], circles: set[Circle], lines: set[Line], center: Point, secondpoint: Point):
     new_circle: Circle = (center, secondpoint, dist(center, secondpoint))
     
     if not circleIsAllowed(circles, new_circle):
@@ -29,6 +23,14 @@ def addRandomCircle(points: set[Point], circles: set[Circle], lines: set[Line]):
 
     addCircles(circles, {new_circle})
 
+def addRandomCircle(points: set[Point], circles: set[Circle], lines: set[Line]):
+    center = random.choice(list(points))
+
+    points.remove(center)
+    secondpoint = random.choice(list(points))
+    points.add(center)
+    addCircleIntersects(points, circles, lines, center, secondpoint)
+    
 def addRandomLine(points: set[Point], circles: set[Circle], lines: set[Line]):
     point1 = random.choice(list(points))
 
