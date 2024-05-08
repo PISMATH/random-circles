@@ -26,6 +26,39 @@ def renderEverything(lines: set[Line], points: set[Point], circles: set[Circle],
 
     pygame.display.flip()
 
+def tokenizeState(points: set[Point], circles: set[Circle], lines: set[Line]):
+    if len(points) > 50 or len(circles) > 50 or len(lines) > 50:
+        return False
+    
+    stateList = []
+    
+    for point in points:
+        stateList.extend(point)
+    
+    for _ in range(50 - len(points)):
+        stateList.extend([0] * 2)
+    
+    for circle in circles:
+        p1, _, r = circle
+        stateList.extend(p1)
+        stateList.append(r)
+
+    for _ in range(50 - len(circles)):
+        stateList.extend([0] * 3)
+
+    for line in lines:
+        p1, p2 = line
+        stateList.extend(p1)
+        stateList.extend(p2)
+
+    for _ in range(50 - len(lines)):
+        stateList.extend([0] * 4)
+    
+    return stateList
+
+def neuralNetLossFuntion(points: set[Point], circles: set[Circle], lines: set[Line], systemOutputs):
+    pass
+
 def main():
     screen_scale = scale
     pygame.init()
@@ -111,6 +144,6 @@ def main():
                 
                   
         renderEverything(lines, points, circles, screen_scale, screen)
-        
+        print(tokenizeState(points, circles, lines))
 
 main()
